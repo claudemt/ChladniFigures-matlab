@@ -1,0 +1,1012 @@
+\documentclass[12pt]{ctexart}
+\usepackage{amsmath,amssymb,bm}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{physics}
+\usepackage{mathtools}
+
+\begin{document}
+
+\section*{Kirchhoff--Love 薄板振动讲义（扩充版）}
+
+\subsection*{1. 统一框架：线性薄板方程、模态与静/动态分解}
+
+\subsubsection*{1.1 基本假设与控制方程}
+考虑厚度为 \(h\) 的均匀、各向同性、线弹性薄板，其中面区域记为 \(\Omega\)，边界记为 \(\Gamma\)。采用 Kirchhoff--Love 假设：
+\begin{itemize}
+\item 板厚远小于面内尺度；
+\item 挠度与转角都足够小；
+\item 变形后中面法线仍保持为直线，并保持与中面垂直；
+\item 忽略横向剪切变形与转动惯量。
+\end{itemize}
+
+记中面横向位移为 \(w(x,y,t)\)，则板的控制方程为
+\[
+\rho h \frac{\partial^2 w}{\partial t^2} + D \nabla_t^4 w = q(x,y,t),
+\qquad
+D=\frac{Eh^3}{12(1-\nu^2)},
+\]
+其中
+\[
+\nabla_t^2=\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2},
+\qquad
+\nabla_t^4=(\nabla_t^2)^2.
+\]
+
+为了统一静态、自由振动与受迫振动，先考虑谐振型载荷
+\[
+q(x,y,t)=\Re\{Q(x,y)e^{-i\Omega t}\},
+\qquad
+w(x,y,t)=\Re\{W(x,y)e^{-i\Omega t}\}.
+\]
+代入得
+\[
+\left(D\nabla_t^4-\rho h \Omega^2\right)W=Q.
+\]
+于是三类问题都可看成这一统一方程的特例：
+\[
+\begin{cases}
+D\nabla_t^4 w_s=q_s, & \text{静态问题，对应 } \Omega=0,\\[4pt]
+\left(D\nabla_t^4-\rho h \omega^2\right)\Phi=0, & \text{自由振动，对应 } Q=0,\\[4pt]
+\left(D\nabla_t^4-\rho h \Omega^2\right)W=Q, & \text{谐受迫振动。}
+\end{cases}
+\]
+
+\subsubsection*{1.2 弯矩、剪力与边界条件}
+记板的弯矩张量
+\[
+\bm M=-D\left(\nu \bm I_t \nabla_t^2 +(1-\nu)\bm\nabla_t\bm\nabla_t\right)w.
+\]
+在直角坐标下，
+\[
+M_x=-D\left(\frac{\partial^2 w}{\partial x^2}+\nu\frac{\partial^2 w}{\partial y^2}\right),
+\qquad
+M_y=-D\left(\frac{\partial^2 w}{\partial y^2}+\nu\frac{\partial^2 w}{\partial x^2}\right),
+\]
+\[
+M_{xy}=-D(1-\nu)\frac{\partial^2 w}{\partial x\partial y}.
+\]
+相应的 Kirchhoff 剪力为
+\[
+Q_x=-D\frac{\partial}{\partial x}\left(\nabla_t^2 w\right),
+\qquad
+Q_y=-D\frac{\partial}{\partial y}\left(\nabla_t^2 w\right).
+\]
+边界上的有效法向剪力记为
+\[
+V_n = Q_n+\frac{\partial M_{n\tau}}{\partial \tau}.
+\]
+
+常见三类边界条件统一写为
+\[
+\begin{cases}
+w|_\Gamma=0,\qquad \dfrac{\partial w}{\partial n}\bigg|_\Gamma=0, & \text{C (固支)},\\[8pt]
+w|_\Gamma=0,\qquad M_{nn}|_\Gamma=0, & \text{S (简支)},\\[8pt]
+M_{nn}|_\Gamma=0,\qquad V_n|_\Gamma=0, & \text{F (自由)}.
+\end{cases}
+\]
+
+\subsubsection*{1.3 本征模态与正交性}
+自由振动满足
+\[
+D\nabla_t^4\Phi_n=\rho h \omega_n^2 \Phi_n,
+\]
+并在边界上满足与原问题相同的齐次边界条件。对经典的 C / S / F 边界条件，该本征值问题是自伴的，因此不同本征频率对应的模态满足正交关系
+\[
+\int_\Omega \rho h\, \Phi_m \Phi_n \, d\Omega = 0,
+\qquad m\neq n.
+\]
+记模态质量为
+\[
+M_n=\int_\Omega \rho h\, \Phi_n^2\, d\Omega.
+\]
+则可将模态选为质量正交归一基
+\[
+\int_\Omega \rho h\, \Phi_m \Phi_n\, d\Omega = M_n\delta_{mn}.
+\]
+
+\paragraph{注 1}
+若某个本征频率具有重根，则可在对应本征子空间中取一组相互正交的基函数。圆板中 \(m\ge 1\) 的 \(\cos m\phi\) 与 \(\sin m\phi\) 正是这种二重简并的典型例子。
+
+\paragraph{注 2}
+若整块板四周全自由，则存在刚体模态，对应 \(\omega=0\)。这时静力问题若无额外约束，解一般不唯一。
+
+\subsubsection*{1.4 模态展开：静态、自由振动与受迫振动的统一}
+设
+\[
+w(x,y,t)=\sum_{n=1}^\infty q_n(t)\Phi_n(x,y).
+\]
+代入控制方程并利用正交性，得到一组完全解耦的单自由度方程
+\[
+\ddot q_n(t)+\omega_n^2 q_n(t)=\frac{F_n(t)}{M_n},
+\]
+其中广义力为
+\[
+F_n(t)=\int_\Omega q(x,y,t)\Phi_n(x,y)\, d\Omega.
+\]
+
+于是：
+
+\paragraph{(i) 静态问题}
+若载荷与时间无关，且静态解写作
+\[
+w_s(x,y)=\sum_{n=1}^\infty a_n\Phi_n(x,y),
+\]
+则
+\[
+a_n=\frac{1}{M_n\omega_n^2}\int_\Omega q_s(x,y)\Phi_n(x,y)\, d\Omega,
+\]
+故
+\[
+w_s(x,y)=
+\sum_{n=1}^\infty
+\frac{\displaystyle \int_\Omega q_s \Phi_n\, d\Omega}
+{M_n\omega_n^2}
+\Phi_n(x,y).
+\]
+
+\paragraph{(ii) 自由振动}
+对应 \(F_n=0\)，故
+\[
+q_n(t)=A_n\cos\omega_n t+B_n\sin\omega_n t.
+\]
+于是
+\[
+w(x,y,t)=\sum_{n=1}^\infty \left(A_n\cos\omega_n t+B_n\sin\omega_n t\right)\Phi_n(x,y).
+\]
+
+\paragraph{(iii) 谐受迫振动}
+若
+\[
+q(x,y,t)=\Re\{Q(x,y)e^{-i\Omega t}\},
+\qquad
+w(x,y,t)=\Re\{W(x,y)e^{-i\Omega t}\},
+\]
+且写
+\[
+W(x,y)=\sum_{n=1}^\infty c_n \Phi_n(x,y),
+\]
+则
+\[
+c_n=
+\frac{\displaystyle \int_\Omega Q\Phi_n\, d\Omega}
+{M_n(\omega_n^2-\Omega^2)}.
+\]
+故谐响应为
+\[
+W(x,y)=
+\sum_{n=1}^\infty
+\frac{\displaystyle \int_\Omega Q\Phi_n\, d\Omega}
+{M_n(\omega_n^2-\Omega^2)}
+\Phi_n(x,y).
+\]
+由此可见，静态问题就是 \(\Omega=0\) 的极限；自由振动则是 \(Q=0\) 且只保留齐次解。
+
+\subsection*{2. 圆板}
+
+考虑半径为 \(R\) 的实心圆板，采用极坐标 \((r,\phi)\)，并记
+\[
+\xi=\frac{r}{R}.
+\]
+
+\subsubsection*{2.1 极坐标下的边界算子}
+极坐标下
+\[
+\nabla_t^2
+=
+\frac{\partial^2}{\partial r^2}
++\frac{1}{r}\frac{\partial}{\partial r}
++\frac{1}{r^2}\frac{\partial^2}{\partial \phi^2}.
+\]
+弯矩分量为
+\[
+M_{rr}
+=
+-D\left(
+\frac{\partial^2 w}{\partial r^2}
++\nu\left(
+\frac{1}{r}\frac{\partial w}{\partial r}
++\frac{1}{r^2}\frac{\partial^2 w}{\partial \phi^2}
+\right)\right),
+\]
+\[
+M_{\phi\phi}
+=
+-D\left(
+\frac{1}{r}\frac{\partial w}{\partial r}
++\frac{1}{r^2}\frac{\partial^2 w}{\partial \phi^2}
++\nu \frac{\partial^2 w}{\partial r^2}
+\right),
+\]
+\[
+M_{r\phi}
+=
+-D(1-\nu)\left(
+\frac{1}{r}\frac{\partial^2 w}{\partial r\partial \phi}
+-\frac{1}{r^2}\frac{\partial w}{\partial \phi}
+\right).
+\]
+有效径向剪力为
+\[
+V_r
+=
+-D\left[
+\frac{\partial}{\partial r}\left(\nabla_t^2 w\right)
++
+(1-\nu)\left(
+\frac{1}{r^2}\frac{\partial^3 w}{\partial r\partial \phi^2}
+-\frac{1}{r^3}\frac{\partial^2 w}{\partial \phi^2}
+\right)
+\right].
+\]
+因此 \(r=R\) 上的三类边界条件为
+\[
+\begin{cases}
+w=0,\qquad \dfrac{\partial w}{\partial r}=0, & \text{C},\\[8pt]
+w=0,\qquad M_{rr}=0, & \text{S},\\[8pt]
+M_{rr}=0,\qquad V_r=0, & \text{F}.
+\end{cases}
+\]
+
+\subsubsection*{2.2 统一的分离变量形式}
+对于谐响应
+\[
+\left(\nabla_t^4-k^4\right)W=\frac{Q(r,\phi)}{D},
+\qquad
+k^4=\frac{\rho h \Omega^2}{D},
+\]
+将角向展开为
+\[
+W(r,\phi)=\sum_{m=0}^\infty W_m(r)\cos(m\phi)
++\sum_{m=1}^\infty \widetilde W_m(r)\sin(m\phi).
+\]
+对于每个角向阶数 \(m\)，齐次方程的径向通解为
+\[
+W_m^{(h)}(r)
+=
+A_m J_m(kr)+B_m Y_m(kr)+C_m I_m(kr)+D_m K_m(kr).
+\]
+对实心圆板，由于 \(r=0\) 处需有限，必须舍去 \(Y_m,K_m\)，故
+\[
+W_m^{(h)}(r)=A_m J_m(kr)+B_m I_m(kr).
+\]
+
+静态问题是 \(k=0\) 的退化极限。此时双调和方程的齐次解为：
+
+\paragraph{(i) \(m=0\)}
+\[
+w_0^{(h)}(\xi)=A_0+B_0\xi^2+C_0\ln\xi+D_0\xi^2\ln\xi.
+\]
+
+\paragraph{(ii) \(m=1\)}
+\[
+w_1^{(h)}(\xi)=A_1\xi+B_1\xi^{-1}+C_1\xi^3+D_1\xi\ln\xi.
+\]
+
+\paragraph{(iii) \(m\ge 2\)}
+\[
+w_m^{(h)}(\xi)=A_m\xi^m+B_m\xi^{-m}+C_m\xi^{m+2}+D_m\xi^{2-m}.
+\]
+
+对于实心圆板，由 \(\xi=0\) 处有限性知：
+\[
+w_0^{(h)}(\xi)=A_0+B_0\xi^2,
+\]
+\[
+w_1^{(h)}(\xi)=A_1\xi+C_1\xi^3,
+\]
+\[
+w_m^{(h)}(\xi)=A_m\xi^m+C_m\xi^{m+2},\qquad m\ge 2.
+\]
+
+\subsubsection*{2.3 圆板的模态}
+自由振动时 \(Q=0,\ \Omega=\omega\)，记
+\[
+\beta=kR=\omega^{1/2}R\left(\frac{\rho h}{D}\right)^{1/4},
+\qquad
+\Lambda=\beta^2=\omega R^2\sqrt{\frac{\rho h}{D}}.
+\]
+于是实心圆板的自由振型可写为
+\[
+\Phi_{m,s}^{(c)}(r,\phi)
+=
+\left[A J_m(\beta_{m,s}\xi)+B I_m(\beta_{m,s}\xi)\right]\cos(m\phi),
+\]
+\[
+\Phi_{m,s}^{(s)}(r,\phi)
+=
+\left[A J_m(\beta_{m,s}\xi)+B I_m(\beta_{m,s}\xi)\right]\sin(m\phi),
+\]
+其中 \(s=1,2,\cdots\) 表示同一 \(m\) 下按径向节点数排序的模态序号。对应固有频率为
+\[
+\omega_{m,s}
+=
+\frac{\beta_{m,s}^2}{R^2}\sqrt{\frac{D}{\rho h}}.
+\]
+当 \(m=0\) 时模态非简并；当 \(m\ge 1\) 时 \(\cos(m\phi)\) 与 \(\sin(m\phi)\) 为同频二重模态。
+
+\subsubsection*{2.4 实心圆板三类边界条件下的本征方程}
+
+\paragraph{(i) 固支边界 C}
+边界条件
+\[
+W(1,\phi)=0,\qquad \pdv{W}{\xi}(1,\phi)=0.
+\]
+对应系数方程
+\[
+\begin{pmatrix}
+J_m(\beta) & I_m(\beta)\\
+J_m'(\beta) & I_m'(\beta)
+\end{pmatrix}
+\begin{pmatrix} A\\ B \end{pmatrix}=0.
+\]
+非平凡解存在的条件为
+\[
+J_m(\beta)I_m'(\beta)-J_m'(\beta)I_m(\beta)=0,
+\]
+进一步用递推关系可化为
+\[
+J_m(\beta) I_{m+1}(\beta)+I_m(\beta) J_{m+1}(\beta)=0.
+\]
+因此固支圆板的最终结果为：
+\[
+\beta=\beta_{m,s}\ \text{由}\ 
+J_m(\beta) I_{m+1}(\beta)+I_m(\beta) J_{m+1}(\beta)=0
+\ \text{给出},
+\]
+\[
+\omega_{m,s}
+=
+\frac{\beta_{m,s}^2}{R^2}\sqrt{\frac{D}{\rho h}},
+\]
+\[
+\Phi_{m,s}(r,\phi)
+=
+\left[
+J_m(\beta_{m,s}\xi)
+-\frac{J_m(\beta_{m,s})}{I_m(\beta_{m,s})}I_m(\beta_{m,s}\xi)
+\right]
+\begin{cases}
+\cos(m\phi),\\
+\sin(m\phi).
+\end{cases}
+\]
+
+\paragraph{(ii) 简支边界 S}
+边界条件
+\[
+W(1,\phi)=0,\qquad M_{rr}(1,\phi)=0.
+\]
+对应线性方程组
+\[
+\begin{pmatrix}
+J_m(\beta) & I_m(\beta)\\
+\beta^2 J_m(\beta)+(1-\nu)\bigl(\beta J_m'(\beta)-m^2J_m(\beta)\bigr)
+&
+-\beta^2 I_m(\beta)+(1-\nu)\bigl(\beta I_m'(\beta)-m^2I_m(\beta)\bigr)
+\end{pmatrix}
+\begin{pmatrix} A\\ B \end{pmatrix}=0.
+\]
+本征方程可化简为
+\[
+\frac{J_{m+1}(\beta)}{J_m(\beta)}+
+\frac{I_{m+1}(\beta)}{I_m(\beta)}
+=
+\frac{2\beta}{1-\nu}.
+\]
+因此简支圆板的最终结果为：
+\[
+\beta=\beta_{m,s}\ \text{由}\ 
+\frac{J_{m+1}(\beta)}{J_m(\beta)}+
+\frac{I_{m+1}(\beta)}{I_m(\beta)}
+=
+\frac{2\beta}{1-\nu}
+\ \text{给出},
+\]
+\[
+\omega_{m,s}
+=
+\frac{\beta_{m,s}^2}{R^2}\sqrt{\frac{D}{\rho h}},
+\]
+\[
+\Phi_{m,s}(r,\phi)
+=
+\left[
+J_m(\beta_{m,s}\xi)
+-\frac{J_m(\beta_{m,s})}{I_m(\beta_{m,s})}I_m(\beta_{m,s}\xi)
+\right]
+\begin{cases}
+\cos(m\phi),\\
+\sin(m\phi).
+\end{cases}
+\]
+
+\paragraph{(iii) 自由边界 F}
+边界条件
+\[
+M_{rr}(1,\phi)=0,\qquad V_r(1,\phi)=0.
+\]
+对应方程组
+\[
+\begin{pmatrix}
+\beta^2 J_m(\beta)+(1-\nu)\bigl(\beta J_m'(\beta)-m^2J_m(\beta)\bigr)
+&
+-\beta^2 I_m(\beta)+(1-\nu)\bigl(\beta I_m'(\beta)-m^2I_m(\beta)\bigr)
+\\[6pt]
+\beta^3 J_m'(\beta)+m^2(1-\nu)\bigl(\beta J_m'(\beta)-J_m(\beta)\bigr)
+&
+-\beta^3 I_m'(\beta)+m^2(1-\nu)\bigl(\beta I_m'(\beta)-I_m(\beta)\bigr)
+\end{pmatrix}
+\begin{pmatrix} A\\ B \end{pmatrix}=0.
+\]
+因此自由圆板的最终结果为：
+\[
+\beta=\beta_{m,s}\ \text{由上式 }2\times2\text{ 行列式为零确定},
+\]
+\[
+\omega_{m,s}
+=
+\frac{\beta_{m,s}^2}{R^2}\sqrt{\frac{D}{\rho h}}.
+\]
+若取
+\[
+a_m(\beta)
+=
+\beta^2 J_m(\beta)+(1-\nu)\bigl(\beta J_m'(\beta)-m^2J_m(\beta)\bigr),
+\]
+\[
+b_m(\beta)
+=
+-\beta^2 I_m(\beta)+(1-\nu)\bigl(\beta I_m'(\beta)-m^2I_m(\beta)\bigr),
+\]
+则对应振型可写为
+\[
+\Phi_{m,s}(r,\phi)
+=
+\left[
+J_m(\beta_{m,s}\xi)-\frac{a_m(\beta_{m,s})}{b_m(\beta_{m,s})}I_m(\beta_{m,s}\xi)
+\right]
+\begin{cases}
+\cos(m\phi),\\
+\sin(m\phi).
+\end{cases}
+\]
+
+\subsubsection*{2.5 轴对称静态问题的最终结果}
+若载荷轴对称，则只保留 \(m=0\) 项。静态方程化为
+\[
+\frac{1}{r}\frac{d}{dr}\left[
+r\frac{d}{dr}
+\left(
+\frac{1}{r}\frac{d}{dr}\left(r\frac{dw}{dr}\right)
+\right)
+\right]
+=
+\frac{q(r)}{D}.
+\]
+
+\paragraph{(i) 均布载荷 \(q=q_0\)}
+轴对称特解可取
+\[
+w^{(p)}=\frac{q_0R^4}{64D}\xi^4.
+\]
+实心圆板轴对称总解为
+\[
+w(\xi)=\frac{q_0R^4}{64D}\left(\xi^4+A\xi^2+B\right).
+\]
+
+\textbf{固支边界 C：}
+\[
+w(1)=0,\qquad \left.\dv{w}{\xi}\right|_{\xi=1}=0
+\]
+给出
+\[
+w(\xi)=\frac{q_0R^4}{64D}(1-\xi^2)^2.
+\]
+
+\textbf{简支边界 S：}
+\[
+w(1)=0,\qquad M_{rr}(1)=0
+\]
+给出
+\[
+w(\xi)=\frac{q_0R^4}{64D}
+\left(
+\xi^4-\frac{2(3+\nu)}{1+\nu}\xi^2+\frac{5+\nu}{1+\nu}
+\right).
+\]
+
+\textbf{自由边界 F：}
+整体自由的静力问题存在刚体模态，若无额外支承与约束，则静平衡解一般不唯一，因此此处不作单独讨论。
+
+\paragraph{(ii) 中心点力 \(P\)}
+对作用于圆心的集中力，轴对称解在 \(r>0\) 内满足齐次双调和方程，其最终结果为：
+
+\textbf{固支边界 C：}
+\[
+w(\xi)
+=
+\frac{PR^2}{16\pi D}
+\left(
+1-\xi^2+2\xi^2\ln\xi
+\right).
+\]
+
+\textbf{简支边界 S：}
+\[
+w(\xi)
+=
+\frac{PR^2}{16\pi D}
+\left[
+\frac{3+\nu}{1+\nu}(1-\xi^2)+2\xi^2\ln\xi
+\right].
+\]
+
+这两个公式在 \(\xi\to 0\) 时有限，其导数在圆心附近呈现集中载荷所对应的特征奇性。
+
+\subsubsection*{2.6 非轴对称静载的一般结果}
+若静载 \(q(r,\phi)\) 非轴对称，可展开为
+\[
+q(r,\phi)=q_0(r)+\sum_{m=1}^\infty q_m^{(c)}(r)\cos m\phi
++\sum_{m=1}^\infty q_m^{(s)}(r)\sin m\phi.
+\]
+对应挠度亦可展开为
+\[
+w(r,\phi)=w_0(r)+\sum_{m=1}^\infty w_m^{(c)}(r)\cos m\phi
++\sum_{m=1}^\infty w_m^{(s)}(r)\sin m\phi.
+\]
+每一阶径向函数由前述双调和齐次解加上相应特解构成，系数由
+\[
+r=0 \text{ 处有限性}+\ r=R \text{ 处边界条件}
+\]
+唯一确定。故对圆板而言，\textbf{最终结果的通式}就是：
+\[
+w_m(r)=w_m^{(p)}(r)+w_m^{(h)}(r),
+\]
+其中 \(w_m^{(h)}\) 的一般形式已经在 \S 2.2 中列出，而 \(w_m^{(p)}\) 则由具体载荷项决定。
+
+\subsection*{3. 长方板}
+
+取长方板区域为
+\[
+0<x<a,\qquad 0<y<b.
+\]
+
+\subsubsection*{3.1 基本方程与边界算子}
+谐响应方程为
+\[
+\left(\nabla_t^4-k^4\right)W=\frac{Q(x,y)}{D},
+\qquad
+k^4=\frac{\rho h \Omega^2}{D}.
+\]
+静态问题对应 \(k=0\)：
+\[
+\nabla_t^4 w=\frac{q(x,y)}{D}.
+\]
+自由振动对应
+\[
+\left(\nabla_t^4-k^4\right)\Phi=0.
+\]
+
+沿 \(x=\text{const}\) 的边，
+\[
+M_x=-D\left(W_{xx}+\nu W_{yy}\right),
+\qquad
+V_x=-D\left(W_{xxx}+(2-\nu)W_{xyy}\right).
+\]
+沿 \(y=\text{const}\) 的边，
+\[
+M_y=-D\left(W_{yy}+\nu W_{xx}\right),
+\qquad
+V_y=-D\left(W_{yyy}+(2-\nu)W_{xxy}\right).
+\]
+因此：
+\[
+\begin{cases}
+W=0,\qquad \partial_n W=0, & \text{C},\\[6pt]
+W=0,\qquad M_{nn}=0, & \text{S},\\[6pt]
+M_{nn}=0,\qquad V_n=0, & \text{F}.
+\end{cases}
+\]
+
+\subsubsection*{3.2 四边简支长方板：Navier 完整结果}
+这是最标准、也是最完整可显式写出的情形。设四边均为简支：
+\[
+W(0,y)=W(a,y)=0,\qquad W(x,0)=W(x,b)=0,
+\]
+\[
+M_x|_{x=0,a}=0,\qquad M_y|_{y=0,b}=0.
+\]
+
+\paragraph{(i) 自由振动模态与频率}
+取
+\[
+\Phi_{mn}(x,y)=\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b},
+\qquad m,n=1,2,\cdots
+\]
+则
+\[
+\nabla_t^2 \Phi_{mn}
+=
+-\lambda_{mn}^2 \Phi_{mn},
+\qquad
+\lambda_{mn}^2=
+\left(\frac{m\pi}{a}\right)^2+\left(\frac{n\pi}{b}\right)^2.
+\]
+进一步
+\[
+\nabla_t^4 \Phi_{mn}=\lambda_{mn}^4 \Phi_{mn}.
+\]
+故本征频率为
+\[
+\omega_{mn}
+=
+\sqrt{\frac{D}{\rho h}}\lambda_{mn}^2
+=
+\pi^2\sqrt{\frac{D}{\rho h}}
+\left(
+\frac{m^2}{a^2}+\frac{n^2}{b^2}
+\right).
+\]
+于是最终结果为
+\[
+\Phi_{mn}(x,y)=\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b},
+\]
+\[
+\omega_{mn}
+=
+\pi^2\sqrt{\frac{D}{\rho h}}
+\left(
+\frac{m^2}{a^2}+\frac{n^2}{b^2}
+\right).
+\]
+
+\paragraph{(ii) 任意谐载荷下的显式响应}
+将载荷展开为
+\[
+Q(x,y)=\sum_{m=1}^\infty\sum_{n=1}^\infty Q_{mn}
+\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b},
+\]
+其中
+\[
+Q_{mn}
+=
+\frac{4}{ab}\int_0^a\int_0^b
+Q(x,y)\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b}\, dx\,dy.
+\]
+则谐响应显式为
+\[
+W(x,y)=
+\sum_{m=1}^\infty\sum_{n=1}^\infty
+\frac{Q_{mn}}{D\lambda_{mn}^4-\rho h \Omega^2}
+\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b}.
+\]
+这就是四边简支板在任意谐载荷下的最终结果。
+
+\paragraph{(iii) 静态问题}
+取 \(\Omega=0\)，即 \(Q=q\)，则
+\[
+w(x,y)=
+\sum_{m=1}^\infty\sum_{n=1}^\infty
+\frac{Q_{mn}}{D\lambda_{mn}^4}
+\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b}.
+\]
+
+\paragraph{(iv) 均布载荷 \(q=q_0\)}
+此时
+\[
+Q_{mn}
+=
+\frac{16q_0}{mn\pi^2},
+\qquad m,n\ \text{均为奇数},
+\]
+偶数项为零，因此
+\[
+w(x,y)=
+\frac{16q_0}{D\pi^6}
+\sum_{\substack{m,n=1\\ m,n\ \text{odd}}}^{\infty}
+\frac{
+\sin\frac{m\pi x}{a}\sin\frac{n\pi y}{b}
+}{
+mn\left(\dfrac{m^2}{a^2}+\dfrac{n^2}{b^2}\right)^2
+}.
+\]
+
+\subsubsection*{3.3 一对对边简支长方板：L\'evy 完整框架}
+若 \(x=0,a\) 两边为简支，则
+\[
+W(0,y)=W(a,y)=0,\qquad M_x|_{x=0,a}=0.
+\]
+于是可取 L\'evy 型展开
+\[
+W(x,y)=\sum_{m=1}^\infty Y_m(y)\sin\frac{m\pi x}{a}.
+\]
+记
+\[
+\alpha_m=\frac{m\pi}{a}.
+\]
+则每个 \(Y_m(y)\) 满足
+\[
+\left(\frac{d^2}{dy^2}-\alpha_m^2\right)^2Y_m-k^4Y_m=\frac{Q_m(y)}{D},
+\]
+其中
+\[
+Q_m(y)=\frac{2}{a}\int_0^a Q(x,y)\sin\frac{m\pi x}{a}\, dx.
+\]
+
+\paragraph{(i) 自由振动与谐响应的齐次解}
+当 \(Q_m=0\) 时，令
+\[
+p_m^2=\alpha_m^2+k^2,\qquad
+q_m^2=k^2-\alpha_m^2,
+\]
+则齐次解可写为
+\[
+Y_m^{(h)}(y)
+=
+A_m\cosh(p_my)+B_m\sinh(p_my)+C_m\cos(q_my)+D_m\sin(q_my).
+\]
+于是 L\'evy 类长方板的最终结果总是
+\[
+W(x,y)=
+\sum_{m=1}^\infty
+\left[
+A_m\cosh(p_my)+B_m\sinh(p_my)+C_m\cos(q_my)+D_m\sin(q_my)
+\right]
+\sin\frac{m\pi x}{a},
+\]
+其中 \(A_m,B_m,C_m,D_m\) 由 \(y=0,b\) 两边的边界条件决定。
+
+\paragraph{(ii) 便于写边界条件的四个行向量}
+定义
+\[
+R_W(y)=
+\begin{bmatrix}
+\cosh(p_my) & \sinh(p_my) & \cos(q_my) & \sin(q_my)
+\end{bmatrix},
+\]
+\[
+R_\theta(y)=
+\begin{bmatrix}
+p_m\sinh(p_my) & p_m\cosh(p_my) & -q_m\sin(q_my) & q_m\cos(q_my)
+\end{bmatrix},
+\]
+\[
+R_M(y)=
+\begin{bmatrix}
+(p_m^2-\nu\alpha_m^2)\cosh(p_my) &
+(p_m^2-\nu\alpha_m^2)\sinh(p_my) &
+-(q_m^2+\nu\alpha_m^2)\cos(q_my) &
+-(q_m^2+\nu\alpha_m^2)\sin(q_my)
+\end{bmatrix},
+\]
+\[
+R_V(y)=
+\begin{bmatrix}
+p_m\bigl(p_m^2-(2-\nu)\alpha_m^2\bigr)\sinh(p_my) &
+p_m\bigl(p_m^2-(2-\nu)\alpha_m^2\bigr)\cosh(p_my) &
+q_m\bigl(q_m^2+(2-\nu)\alpha_m^2\bigr)\sin(q_my) &
+-q_m\bigl(q_m^2+(2-\nu)\alpha_m^2\bigr)\cos(q_my)
+\end{bmatrix}.
+\]
+
+记
+\[
+\bm c_m=
+\begin{bmatrix}
+A_m\\ B_m\\ C_m\\ D_m
+\end{bmatrix}.
+\]
+则
+\[
+Y_m(y)=R_W(y)\bm c_m,\qquad
+Y_m'(y)=R_\theta(y)\bm c_m,
+\]
+\[
+Y_m''(y)-\nu\alpha_m^2Y_m(y)=R_M(y)\bm c_m,
+\]
+\[
+Y_m'''(y)-(2-\nu)\alpha_m^2Y_m'(y)=R_V(y)\bm c_m.
+\]
+
+\paragraph{(iii) 各类 \(y\)-边界条件的最终特征方程}
+在 \(y=0,b\) 上，三类边界条件分别对应：
+
+\[
+\text{C at } y=y_0:\qquad
+R_W(y_0)\bm c_m=0,\qquad
+R_\theta(y_0)\bm c_m=0;
+\]
+\[
+\text{S at } y=y_0:\qquad
+R_W(y_0)\bm c_m=0,\qquad
+R_M(y_0)\bm c_m=0;
+\]
+\[
+\text{F at } y=y_0:\qquad
+R_M(y_0)\bm c_m=0,\qquad
+R_V(y_0)\bm c_m=0.
+\]
+
+因此，一切 L\'evy 型边界的\textbf{最终本征条件}都可写成
+\[
+\det K_m(k)=0,
+\]
+其中 \(K_m(k)\) 由 \(y=0,b\) 两边的四个边界行向量叠成一个 \(4\times4\) 矩阵。
+
+下面列出最常见几类。
+
+\paragraph{(a) SSSS}
+\[
+K_m^{\text{SS}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_M(0)\\
+R_W(b)\\
+R_M(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{SS}}=0.
+\]
+这一情形可进一步化简回 Navier 结果，最终频率为
+\[
+\omega_{mn}
+=
+\pi^2\sqrt{\frac{D}{\rho h}}
+\left(
+\frac{m^2}{a^2}+\frac{n^2}{b^2}
+\right).
+\]
+
+\paragraph{(b) SSCC}
+\[
+K_m^{\text{SC}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_M(0)\\
+R_W(b)\\
+R_\theta(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{SC}}=0.
+\]
+这就是两条 \(x\)-边简支、两条 \(y\)-边固支时的最终频率方程。
+
+\paragraph{(c) SSFF}
+\[
+K_m^{\text{SF}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_M(0)\\
+R_M(b)\\
+R_V(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{SF}}=0.
+\]
+这就是两条 \(x\)-边简支、两条 \(y\)-边自由时的最终频率方程。
+
+\paragraph{(d) SSSC}
+\[
+K_m^{\text{S/C}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_M(0)\\
+R_W(b)\\
+R_\theta(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{S/C}}=0.
+\]
+这一式与 SSCC 同型；区别仅在于此处强调 \(y=0\) 为简支、\(y=b\) 为固支的非对称表述。
+
+\paragraph{(e) SSSF}
+\[
+K_m^{\text{S/F}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_M(0)\\
+R_M(b)\\
+R_V(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{S/F}}=0.
+\]
+
+\paragraph{(f) SSCF}
+\[
+K_m^{\text{C/F}}
+=
+\begin{pmatrix}
+R_W(0)\\
+R_\theta(0)\\
+R_M(b)\\
+R_V(b)
+\end{pmatrix},
+\qquad
+\det K_m^{\text{C/F}}=0.
+\]
+
+应当强调：对于 L\'evy 类问题，\textbf{本征频率的最终结果就是这些 \(4\times4\) 行列式为零所给出的超越方程}；一般不存在比这更短的统一闭式表达。
+
+\subsubsection*{3.4 L\'evy 类静态问题}
+静态时 \(k=0\)，故每个 \(m\) 阶满足
+\[
+\left(\frac{d^2}{dy^2}-\alpha_m^2\right)^2Y_m=\frac{q_m(y)}{D},
+\qquad
+q_m(y)=\frac{2}{a}\int_0^a q(x,y)\sin\frac{m\pi x}{a}\, dx.
+\]
+其齐次解退化为
+\[
+Y_m^{(h)}(y)
+=
+(A_m+B_my)\cosh(\alpha_my)+(C_m+D_my)\sinh(\alpha_my).
+\]
+因此静态 L\'evy 解的最终形式为
+\[
+w(x,y)=
+\sum_{m=1}^\infty
+\left[
+Y_m^{(p)}(y)
++
+(A_m+B_my)\cosh(\alpha_my)
++
+(C_m+D_my)\sinh(\alpha_my)
+\right]
+\sin\frac{m\pi x}{a},
+\]
+其中 \(Y_m^{(p)}\) 是关于 \(q_m(y)\) 的任意特解，四个系数由 \(y=0,b\) 两边的边界条件确定。
+
+\paragraph{均布载荷 \(q=q_0\)}
+此时
+\[
+q_m(y)=\frac{4q_0}{m\pi},
+\qquad m\ \text{为奇数};
+\qquad
+q_m(y)=0,\quad m\ \text{为偶数}.
+\]
+可取一个常数特解
+\[
+Y_m^{(p)}=\frac{4q_0}{D\,m\pi\,\alpha_m^4},
+\qquad m\ \text{odd}.
+\]
+因此在所有 L\'evy 型静力问题中，最终解都归结为上述级数形式加上边界条件决定的四个常数。
+
+\subsection*{4. 小结与组织方式}
+
+以上内容可概括为以下四点：
+
+\paragraph{1.}
+在 Kirchhoff--Love 理论下，静态问题、自由振动、谐受迫振动本质上都是同一个线性算子
+\[
+D\nabla_t^4-\rho h\Omega^2
+\]
+的不同特例。
+
+\paragraph{2.}
+模态是理解一切问题的核心。只要求出本征对
+\[
+D\nabla_t^4\Phi_n=\rho h\omega_n^2\Phi_n,
+\]
+则静态解、自由振动解、谐响应都可以直接由模态展开写出。
+
+\paragraph{3.}
+圆板最自然的解析方法是极坐标分离变量：
+\begin{itemize}
+\item 静态问题对应双调和方程，最终结果由幂函数 / 对数函数给出；
+\item 动态问题对应 Bessel 与修正 Bessel 函数；
+\item C / S / F 三类边界条件分别给出不同的本征方程。
+\end{itemize}
+
+\paragraph{4.}
+长方板最重要的解析方法有两类：
+\begin{itemize}
+\item \textbf{Navier 解}：四边简支，模态与频率完全显式；
+\item \textbf{L\'evy 解}：一对对边简支，其余两边可为 C / S / F，最终结果由 \(4\times4\) 特征行列式给出。
+\end{itemize}
+
+\end{document}
