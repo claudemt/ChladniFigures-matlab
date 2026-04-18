@@ -1,43 +1,75 @@
-# Chladni GUI Studio (restructured)
+# ChladniFigures-matlab
 
-This version keeps the original plotting titles and figure layout, but reorganizes the codebase more clearly:
+MATLAB project for generating Chladni figures of vibrating plates.
 
-- `core/common/` : unified run entry, output discovery, rectangular boundary metadata
-- `core/rect/`   : rectangular plate solvers
-- `core/circ/`   : circular plate solver
-- `app/ui/display/` : shared UI display helpers, color bar, and plot-format helpers
-- `app/`         : GUI assembly, controls, preview, export
-- `docs/`        : GUI note text
+## Main formulas
 
-## Rectangular branches
+The code solves the thin-plate vibration eigenproblem
+\[
+D\nabla^4 w = \rho h\,\omega^2 w,
+\]
+and plots nodal patterns from the mode shape \(w\).
 
-Legacy branches kept as-is in spirit:
+For rectangular plates, the dimensionless eigenvalue shown in figure titles is
+\[
+\Lambda \propto \omega^2,
+\]
+with boundary-dependent modal equations.
 
-- `FFFF` : original sparse free-edge route
-- `CCCC` : original clamped finite-difference route
-- `SSSS` : Navier exact solution
+For circular plates, the radial part uses Bessel / modified Bessel functions,
+typically of the form
+\[
+J_m(\beta r) + C I_m(\beta r),
+\]
+and eigenvalues are found from the boundary characteristic equation for:
 
-Analytic Levy-family branches added:
+- clamped
+- simply supported
+- free
 
-- `SSCC`
-- `SSFF`
-- `SSSC`
-- `SSSF`
-- `SSCF`
+## Boundary conventions
 
-For these `SS??` cases, the implementation follows the lecture's Levy separation framework with four boundary row operators `RW`, `Rtheta`, `RM`, `RV`, and solves the transcendental determinant condition for each modal family.
+Rectangular branches:
 
-## Output folders
+- `FFFF`: free on all four edges
+- `CCCC`: clamped on all four edges
+- `SSSS`: simply supported on all four edges
+- `SSCC`, `SSFF`, `SSSC`, `SSSF`, `SSCF`: Levy-type mixed-edge cases
 
-Generated figures are written into deterministic parameter folders under `output/`, for example:
+Circular branches:
 
-- `output/rect_sscc_nu_0.225/`
-- `output/circ_free_nu_0.3/`
+- `free`
+- `simply`
+- `clamped`
 
-No timestamp is used. Re-running the same parameter set clears old PNG files in that folder before writing new ones.
+## Basic conventions
+
+- `nu` = Poisson ratio
+- `k` = number of modes to export
+- `n` = grid resolution for plotting
+- figures are written as PNG files
+- nodal lines are the zero contour of the computed mode shape
+- repeated runs overwrite/refresh output in the corresponding output folder
 
 ## Run
 
+Launch the app:
 ```matlab
 main
 ```
+
+Or call the core solvers directly after adding the project to the MATLAB path.
+
+## Folder notes
+
+- `app/`: GUI
+- `core/rect/`: rectangular plate solvers
+- `core/circ/`: circular plate solver
+- `core/common/`: shared helpers
+- `docs/`: notes and references
+
+## Tips
+
+- Increase `n` for smoother nodal lines.
+- Increase `k` to export more modes.
+- If a circular case misses modes, enlarge the search range in the circular solver.
