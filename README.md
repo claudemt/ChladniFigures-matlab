@@ -89,6 +89,7 @@ Where:
 - $\omega$ = natural frequency
 
 Chladni figures correspond to the **nodal lines**:
+
 $$
 W(x,y) = 0
 $$
