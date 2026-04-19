@@ -1,19 +1,18 @@
-function sol = solve_rect_levy_family(nu, k, n, boundaryKey)
+function sol = solve_rect_levy_family(nu, k, n, boundaryKey, a, b)
 %SOLVE_RECT_LEVY_FAMILY Analytic Levy-family modes for SS?? rectangular plates.
 % x = 0,a are simply supported; y = 0,b take S/C/F according to boundaryKey.
 
-a = 2.0;
-b = 2.0;
-Nplot = max(1201, 6*(n-2));
-x = linspace(-1, 1, Nplot);
-xp = x + 1.0;
-y = x;
-yp = y + 1.0;
+if nargin < 5 || isempty(a), a = 2.0; end
+if nargin < 6 || isempty(b), b = 2.0; end
+
+[Nx, Ny, x, y] = rect_plot_vectors(a, b, n);
+xp = x + a/2;
+yp = y + b/2;
 
 mMax0 = max(18, ceil(sqrt(2*k)) + 12);
-lambdaMax0 = max(400, 40*k);
-Nscan = 5000;
-rootAbsTol = 1e-8;
+lambdaMax0 = max(400, 40*k) * (4 / min(a,b)^2);
+Nscan = 6000;
+rootAbsTol = 1e-9;
 mergeTol = 1e-7;
 
 modes = [];
@@ -37,20 +36,26 @@ for attempt = 1:3
         end
 
         roots_m = [];
-        for ii = 1:numel(lambdaGrid)-1
-            l1 = lambdaGrid(ii);
-            l2 = lambdaGrid(ii+1);
+        for ii = 2:numel(lambdaGrid)-1
+            f0 = detVals(ii-1);
             f1 = detVals(ii);
             f2 = detVals(ii+1);
-            if ~isfinite(f1) || ~isfinite(f2)
+            if ~all(isfinite([f0 f1 f2]))
                 continue;
             end
-            useBracket = (sign(f1) ~= sign(f2));
-            if ~useBracket && abs(f1) > 1e-6 && abs(f2) > 1e-6
+            hasSignChange = (sign(f0) ~= sign(f1)) || (sign(f1) ~= sign(f2));
+            isLocalMin = abs(f1) <= abs(f0) && abs(f1) <= abs(f2);
+            if ~(hasSignChange || isLocalMin)
                 continue;
             end
+            l1 = lambdaGrid(ii-1);
+            l2 = lambdaGrid(ii+1);
             try
-                r = fzero(@(lam) levy_det(lam, m, nu, a, b, boundaryKey), [l1, l2]);
+                if hasSignChange
+                    r = fzero(@(lam) levy_det(lam, m, nu, a, b, boundaryKey), [l1, l2]);
+                else
+                    r = fminbnd(@(lam) abs(levy_det(lam, m, nu, a, b, boundaryKey)), l1, l2);
+                end
                 if isfinite(r) && r > lower && r <= lambdaMax
                     if abs(levy_det(r, m, nu, a, b, boundaryKey)) < rootAbsTol
                         roots_m(end+1) = r; %#ok<AGROW>
@@ -64,7 +69,6 @@ for attempt = 1:3
             continue;
         end
         roots_m = sort(roots_m(:));
-        roots_m = unique(round(roots_m, 8));
         roots_m = merge_close(roots_m, mergeTol);
 
         for ir = 1:numel(roots_m)
@@ -109,7 +113,8 @@ for j = 1:kUse
     modesU{j} = U;
 end
 
-sol = struct('x', x, 'modesU', {modesU}, 'lamDisp', lamDisp);
+sol = struct('x', x, 'y', y, 'modesU', {modesU}, 'lamDisp', lamDisp, ...
+    'a', a, 'b', b, 'Nx', Nx, 'Ny', Ny);
 end
 
 function val = levy_det(lambda, m, nu, a, b, boundaryKey)
@@ -220,32 +225,61 @@ if isempty(x)
 end
 v = x(1);
 for i = 2:numel(x)
-    if abs(x(i) - v(end)) > tol
+    if abs(x(i) - v(end)) > tol * max(1, abs(v(end)))
         v(end+1,1) = x(i); %#ok<AGROW>
     end
 end
 end
 
-function U = enforce_zero_edges(U, boundaryKey)
-% left/right correspond x=0,a and are always simply supported in Levy family
-U(:,1) = 0;
-U(:,end) = 0;
-switch boundaryKey
-    case {'ssss', 'sscc', 'sssc', 'sssf', 'sscf'}
-        U(1,:) = 0;
+function U = canonicalize_mode(U)
+[~, idx] = max(abs(U(:)));
+if isempty(idx) || abs(U(idx)) < eps
+    return;
 end
-switch boundaryKey
-    case {'ssss', 'sscc', 'sssc'}
-        U(end,:) = 0;
+if U(idx) < 0
+    U = -U;
 end
 end
 
-function v = canonicalize_mode(v)
-[~, idx] = max(abs(v(:)));
-if isempty(idx) || abs(v(idx)) < eps
-    return;
+function U = enforce_zero_edges(U, boundaryKey)
+[leftZero, rightZero, bottomZero, topZero] = boundary_zero_edges(boundaryKey);
+if leftZero, U(:,1) = 0; end
+if rightZero, U(:,end) = 0; end
+if bottomZero, U(1,:) = 0; end
+if topZero, U(end,:) = 0; end
 end
-if v(idx) < 0
-    v = -v;
+
+function [leftZero, rightZero, bottomZero, topZero] = boundary_zero_edges(boundaryKey)
+leftZero = true;
+rightZero = true;
+switch boundaryKey
+    case 'ssss'
+        bottomZero = true; topZero = true;
+    case 'sscc'
+        bottomZero = true; topZero = true;
+    case 'ssff'
+        bottomZero = false; topZero = false;
+    case 'sssc'
+        bottomZero = true; topZero = true;
+    case 'sssf'
+        bottomZero = true; topZero = false;
+    case 'sscf'
+        bottomZero = true; topZero = false;
+    otherwise
+        bottomZero = false; topZero = false;
 end
+end
+
+function [Nx, Ny, x, y] = rect_plot_vectors(a, b, n)
+longN = max(241, 2*round(n) + 1);
+longN = max(longN, 81);
+if a >= b
+    Nx = longN;
+    Ny = max(81, 2*floor(((b/a)*(Nx-1))/2) + 1);
+else
+    Ny = longN;
+    Nx = max(81, 2*floor(((a/b)*(Ny-1))/2) + 1);
+end
+x = linspace(-a/2, a/2, Nx);
+y = linspace(-b/2, b/2, Ny);
 end

@@ -8,7 +8,12 @@ if ~isvalid(dlg)
     return;
 end
 
-dlg.Value = max(0, min(1, value));
-dlg.Message = message;
+clamped = max(0, min(1, value));
+dlg.Value = clamped;
+if nargin >= 3 && ~isempty(message)
+    dlg.Message = message;
+else
+    dlg.Message = 'working';
+end
 drawnow limitrate;
 end

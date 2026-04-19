@@ -11,6 +11,7 @@ app.figure = uifigure( ...
     'Name', 'Chladni GUI Studio', ...
     'Position', [80 80 1240 780], ...
     'Color', [0.98 0.98 0.98]);
+app.figure.CloseRequestFcn = @(src, evt) local_close_request(src, project_root); %#ok<NASGU>
 
 root_grid = uigridlayout(app.figure, [1 1]);
 root_grid.RowHeight = {'1x'};
@@ -27,4 +28,16 @@ create_chladni_tab(app.tab_group, project_root);
 
 drawnow;
 app.figure.WindowState = 'maximized';
+end
+
+function local_close_request(fig, project_root)
+cache_root = fullfile(project_root, '.cache');
+if exist(cache_root, 'dir')
+    try
+        rmdir(cache_root, 's');
+    catch
+    end
+end
+
+delete(fig);
 end

@@ -1,25 +1,33 @@
 function meta = rect_boundary_meta(boundary)
-%RECT_BOUNDARY_META Normalize rectangular boundary aliases.
+%RECT_BOUNDARY_META Normalize rectangular boundary codes.
+% Rectangular edge order is ULDR = up, left, down, right.
 
-bc = char(lower(string(boundary)));
-switch bc
-    case {'free', 'ffff'}
-        meta = struct('solver_key', 'ffff', 'title_tag', 'F', 'file_tag', 'F', 'is_levy', false);
-    case {'simply', 'ssss'}
-        meta = struct('solver_key', 'ssss', 'title_tag', 'S', 'file_tag', 'S', 'is_levy', true);
-    case {'clamped', 'cccc'}
-        meta = struct('solver_key', 'cccc', 'title_tag', 'C', 'file_tag', 'C', 'is_levy', false);
-    case 'sscc'
-        meta = struct('solver_key', 'sscc', 'title_tag', 'SSCC', 'file_tag', 'SSCC', 'is_levy', true);
-    case 'ssff'
-        meta = struct('solver_key', 'ssff', 'title_tag', 'SSFF', 'file_tag', 'SSFF', 'is_levy', true);
-    case 'sssc'
-        meta = struct('solver_key', 'sssc', 'title_tag', 'SSSC', 'file_tag', 'SSSC', 'is_levy', true);
-    case 'sssf'
-        meta = struct('solver_key', 'sssf', 'title_tag', 'SSSF', 'file_tag', 'SSSF', 'is_levy', true);
-    case 'sscf'
-        meta = struct('solver_key', 'sscf', 'title_tag', 'SSCF', 'file_tag', 'SSCF', 'is_levy', true);
+bc = upper(strtrim(char(string(boundary))));
+switch lower(bc)
+    case 'free'
+        code = 'FFFF';
+    case 'simply'
+        code = 'SSSS';
+    case 'clamped'
+        code = 'CCCC';
     otherwise
-        error('Unknown rectangular boundary condition: %s', boundary);
+        code = upper(bc);
 end
+
+if numel(code) ~= 4 || any(~ismember(code, 'CSF'))
+    error('Rectangular boundary must be a 4-letter ULDR code using only C, S, F, e.g. CFFF, SSFF, or CFSF.');
+end
+
+meta = struct();
+meta.solver_key = lower(code);
+meta.title_tag = code;
+meta.file_tag = code;
+meta.code = code;
+meta.top = code(1);
+meta.left = code(2);
+meta.bottom = code(3);
+meta.right = code(4);
+meta.is_all_free = strcmp(code, 'FFFF');
+meta.is_all_simply = strcmp(code, 'SSSS');
+meta.is_all_clamped = strcmp(code, 'CCCC');
 end

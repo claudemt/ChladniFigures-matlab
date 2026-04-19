@@ -1,14 +1,20 @@
-function sol = solve_rect_clamped_fd_highres(k, n)
-%SOLVE_RECT_CLAMPED_FD_HIGHRES Legacy CCCC finite-difference solver.
+function sol = solve_rect_clamped_fd_highres(k, n, a, b)
+%SOLVE_RECT_CLAMPED_FD_HIGHRES Clamped finite-difference solver for a rectangle.
 
-Nphys = max(121, 3*n + 31);
-Nphys = min(Nphys, 201);
-M = Nphys - 2;
-h = 2 / (Nphys - 1);
-[D2, D4] = clamped_1d_operators(M, h);
+if nargin < 3 || isempty(a), a = 2.0; end
+if nargin < 4 || isempty(b), b = 2.0; end
 
-I = speye(M);
-A = kron(I, D4) + 2*kron(D2, D2) + kron(D4, I);
+[Nx, Ny, x, y] = rect_fd_vectors(a, b, n);
+Mx = Nx - 2;
+My = Ny - 2;
+hx = a / (Nx - 1);
+hy = b / (Ny - 1);
+[D2x, D4x] = clamped_1d_operators(Mx, hx);
+[D2y, D4y] = clamped_1d_operators(My, hy);
+
+Ix = speye(Mx);
+Iy = speye(My);
+A = kron(D4x, Iy) + 2*kron(D2x, D2y) + kron(Ix, D4y);
 A = (A + A.') / 2;
 
 kSearch = min(k + 12, size(A,1) - 2);
@@ -39,15 +45,14 @@ if isempty(lamVec)
 end
 
 kUse = min(k, numel(lamVec));
-x = linspace(-1, 1, Nphys);
 modesU = cell(1, kUse);
 lamDisp = sqrt(max(lamVec(1:kUse), 0));
 lamDisp(lamDisp < 1e-12) = 0;
 
 for j = 1:kUse
-    Uin = reshape(real(V(:,j)), M, M);
+    Uin = reshape(real(V(:,j)), My, Mx);
     Uin = canonicalize_mode(Uin);
-    U = zeros(Nphys, Nphys);
+    U = zeros(Ny, Nx);
     U(2:end-1, 2:end-1) = Uin;
     U(1,:) = 0; U(end,:) = 0; U(:,1) = 0; U(:,end) = 0;
     utol = 1e-12 * max(1, max(abs(U(:)), [], 'omitnan'));
@@ -55,7 +60,24 @@ for j = 1:kUse
     modesU{j} = U;
 end
 
-sol = struct('x', x, 'modesU', {modesU}, 'lamDisp', lamDisp(:).');
+sol = struct('x', x, 'y', y, 'modesU', {modesU}, 'lamDisp', lamDisp(:).', ...
+    'a', a, 'b', b, 'Nx', Nx, 'Ny', Ny);
+end
+
+function [Nx, Ny, x, y] = rect_fd_vectors(a, b, n)
+baseN = max(121, 3*round(n) + 31);
+baseN = min(baseN, 241);
+if a >= b
+    Nx = baseN;
+    Ny = max(41, round((b/a) * (Nx - 1)) + 1);
+else
+    Ny = baseN;
+    Nx = max(41, round((a/b) * (Ny - 1)) + 1);
+end
+Nx = max(9, 2*floor((Nx-1)/2) + 1);
+Ny = max(9, 2*floor((Ny-1)/2) + 1);
+x = linspace(-a/2, a/2, Nx);
+y = linspace(-b/2, b/2, Ny);
 end
 
 function [D2, D4] = clamped_1d_operators(M, h)
